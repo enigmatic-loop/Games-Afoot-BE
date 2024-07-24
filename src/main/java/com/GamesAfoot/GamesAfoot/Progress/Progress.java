@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 @Entity
 @Table(name = "progress")
-public class ProgressModel {
+public class Progress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,9 +20,9 @@ public class ProgressModel {
 
     private String nextHint;
 
-    private ProgressModel() {}
+    private Progress() {}
 
-    public ProgressModel(Integer id, Integer huntId, Integer currentLocationIndex, ArrayList<Integer> visitedLocations, String nextHint) {
+    public Progress(Integer id, Integer huntId, Integer currentLocationIndex, ArrayList<Integer> visitedLocations, String nextHint) {
         this.id = id;
         this.huntId = huntId;
         this.currentLocationIndex = currentLocationIndex;
