@@ -12,6 +12,8 @@ public class Progress {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    private Integer userId;
+
     private Integer huntId;
 
     private Integer currentLocationIndex;
@@ -22,17 +24,38 @@ public class Progress {
 
     private Progress() {}
 
-    public Progress(Integer id, Integer huntId, Integer currentLocationIndex, ArrayList<Integer> visitedLocations, String nextHint) {
+    public Progress(Integer id, Integer userId, Integer huntId, Integer currentLocationIndex, ArrayList<Integer> visitedLocations, String nextHint) {
         this.id = id;
+        this.userId = userId;
         this.huntId = huntId;
         this.currentLocationIndex = currentLocationIndex;
         this.visitedLocations = visitedLocations;
         this.nextHint = nextHint;
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+                """
+                id: %d,
+                userId: %d,
+                huntId: %d,
+                currentLocationIndex: %d,
+                visitedLocations: %s,
+                nextHint: %s
+                """,
+                id, userId, huntId, currentLocationIndex, visitedLocations, nextHint
+        );
+    }
+
     public Integer getId() {
         return this.id;
     }
+
+    public Integer getUserId() {
+        return this.userId;
+    }
+
 
     public Integer getHuntId() {
         return this.huntId;

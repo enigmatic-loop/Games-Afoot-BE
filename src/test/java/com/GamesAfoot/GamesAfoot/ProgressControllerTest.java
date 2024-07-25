@@ -54,7 +54,7 @@ public class ProgressControllerTest {
     @Test
     public void getProgress() throws Exception {
         ArrayList<Integer> visitedLocations = new ArrayList<>(Arrays.asList(1, 2));
-        Progress progress = new Progress(1,1, 1, visitedLocations, "You are close!");
+        Progress progress = new Progress(1, 1, 1, 1, visitedLocations, "You are close!");
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post(PROGRESS_URL)
@@ -68,7 +68,7 @@ public class ProgressControllerTest {
     @Test
     void getProgressIsNotNull() throws Exception {
         ArrayList<Integer> visitedLocations = new ArrayList<>(Arrays.asList(1, 2));
-        Progress progress = new Progress(1,1, 1, visitedLocations, "You are close!");
+        Progress progress = new Progress(1,1, 1, 1, visitedLocations, "You are close!");
 
         given(progressRepository.findAll())
                 .willReturn(List.of(progress));
