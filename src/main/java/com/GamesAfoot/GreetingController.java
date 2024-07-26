@@ -1,4 +1,4 @@
-package com.GamesAfoot.GamesAfoot;
+package com.GamesAfoot;
 
 import java.util.concurrent.atomic.AtomicLong;
 

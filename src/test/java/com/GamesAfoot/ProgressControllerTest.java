@@ -1,8 +1,8 @@
-package com.GamesAfoot.GamesAfoot;
+package com.GamesAfoot;
 
-import com.GamesAfoot.GamesAfoot.Progress.Progress;
-import com.GamesAfoot.GamesAfoot.Progress.ProgressController;
-import com.GamesAfoot.GamesAfoot.Progress.ProgressRepository;
+import com.GamesAfoot.Models.Progress;
+import com.GamesAfoot.Controllers.ProgressController;
+import com.GamesAfoot.Repositories.ProgressRepository;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

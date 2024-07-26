@@ -35,5 +35,3 @@ build/
 shell.log
 
 .env
-/.env
-*env
