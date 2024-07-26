@@ -1,4 +1,4 @@
-package com.GamesAfoot.GamesAfoot.Progress;
+package com.GamesAfoot.Models;
 
 import jakarta.persistence.*;
 
@@ -10,24 +10,32 @@ public class Progress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Integer id;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "userId")
     private Integer userId;
 
-    private Integer huntId;
+    @Column(name = "userInputId")
+    private Integer userInputId;
 
+    @Column(name = "currentLocationIndex")
     private Integer currentLocationIndex;
 
+
+    @Column(name = "visitedLocations")
     private ArrayList<Integer> visitedLocations;
 
+    @Column(name = "nextHint")
     private String nextHint;
 
     private Progress() {}
 
-    public Progress(Integer id, Integer userId, Integer huntId, Integer currentLocationIndex, ArrayList<Integer> visitedLocations, String nextHint) {
+    public Progress(Integer id, Integer userId, Integer userInputId, Integer currentLocationIndex, ArrayList<Integer> visitedLocations, String nextHint) {
         this.id = id;
         this.userId = userId;
-        this.huntId = huntId;
+        this.userInputId = userInputId;
         this.currentLocationIndex = currentLocationIndex;
         this.visitedLocations = visitedLocations;
         this.nextHint = nextHint;
@@ -39,12 +47,12 @@ public class Progress {
                 """
                 id: %d,
                 userId: %d,
-                huntId: %d,
+                userInputId: %d,
                 currentLocationIndex: %d,
                 visitedLocations: %s,
                 nextHint: %s
                 """,
-                id, userId, huntId, currentLocationIndex, visitedLocations, nextHint
+                id, userId, userInputId, currentLocationIndex, visitedLocations, nextHint
         );
     }
 
@@ -56,9 +64,8 @@ public class Progress {
         return this.userId;
     }
 
-
-    public Integer getHuntId() {
-        return this.huntId;
+    public Integer getUserInputId() {
+        return this.userInputId;
     }
 
     public Integer getCurrentLocationIndex() {

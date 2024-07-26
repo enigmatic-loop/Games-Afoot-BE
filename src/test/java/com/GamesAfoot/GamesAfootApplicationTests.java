@@ -1,4 +1,4 @@
-package com.GamesAfoot.GamesAfoot;
+package com.GamesAfoot;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
