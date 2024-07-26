@@ -17,8 +17,8 @@ public class Progress {
     @Column(name = "userId")
     private Integer userId;
 
-    @Column(name = "userInputId")
-    private Integer userInputId;
+    @Column(name = "huntId")
+    private Integer huntId;
 
     @Column(name = "currentLocationIndex")
     private Integer currentLocationIndex;
@@ -32,10 +32,10 @@ public class Progress {
 
     private Progress() {}
 
-    public Progress(Integer id, Integer userId, Integer userInputId, Integer currentLocationIndex, ArrayList<Integer> visitedLocations, String nextHint) {
+    public Progress(Integer id, Integer userId, Integer huntId, Integer currentLocationIndex, ArrayList<Integer> visitedLocations, String nextHint) {
         this.id = id;
         this.userId = userId;
-        this.userInputId = userInputId;
+        this.huntId = huntId;
         this.currentLocationIndex = currentLocationIndex;
         this.visitedLocations = visitedLocations;
         this.nextHint = nextHint;
@@ -47,12 +47,12 @@ public class Progress {
                 """
                 id: %d,
                 userId: %d,
-                userInputId: %d,
+                huntId: %d,
                 currentLocationIndex: %d,
                 visitedLocations: %s,
                 nextHint: %s
                 """,
-                id, userId, userInputId, currentLocationIndex, visitedLocations, nextHint
+                id, userId, huntId, currentLocationIndex, visitedLocations, nextHint
         );
     }
 
@@ -64,8 +64,8 @@ public class Progress {
         return this.userId;
     }
 
-    public Integer getUserInputId() {
-        return this.userInputId;
+    public Integer getHuntId() {
+        return this.huntId;
     }
 
     public Integer getCurrentLocationIndex() {
