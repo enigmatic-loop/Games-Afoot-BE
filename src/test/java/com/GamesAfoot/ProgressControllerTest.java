@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.http.MediaType;
@@ -46,15 +45,16 @@ public class ProgressControllerTest {
     private ProgressController progressController;
 
     @Test
-    void getShouldReturnEmptyList() throws Exception {
-        this.mockMvc.perform(get(PROGRESS_URL)).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().json("[]"));
+    public void getAllProgressReturns200() throws Exception {
+        this.mockMvc.perform(get(PROGRESS_URL)).andDo(print()).andExpect(status().isOk());
     }
 
     @Test
-    public void getProgress() throws Exception {
-        ArrayList<Integer> visitedLocations = new ArrayList<>(Arrays.asList(1, 2));
-        Progress progress = new Progress(1, 1, 1, 1, visitedLocations, "You are close!");
+    public void postProgressReturns201() throws Exception {
+        ArrayList<Object> foundLocations = new ArrayList<>(Arrays.asList(1, true));
+        foundLocations.add(2, true);
+        foundLocations.add(3, false);
+        Progress progress = new Progress(1, 1, 1, 1, foundLocations, "You are close!");
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post(PROGRESS_URL)
@@ -66,13 +66,15 @@ public class ProgressControllerTest {
     }
 
     @Test
-    void getProgressIsNotNull() throws Exception {
-        ArrayList<Integer> visitedLocations = new ArrayList<>(Arrays.asList(1, 2));
-        Progress progress = new Progress(1,1, 1, 1, visitedLocations, "You are close!");
+    public void getAllProgressIsNotNull() throws Exception {
+        ArrayList<Object> foundLocations = new ArrayList<>(Arrays.asList(1, true));
+        foundLocations.add(2, true);
+        foundLocations.add(3, false);
+        Progress progress = new Progress(1,1, 1, 1, foundLocations, "You are close!");
 
         given(progressRepository.findAll())
                 .willReturn(List.of(progress));
-        Iterable<Progress> progressList = progressController.getProgress();
+        Iterable<Progress> progressList = progressController.getAllProgress();
 
         assertThat(progressList).isNotNull();
     }

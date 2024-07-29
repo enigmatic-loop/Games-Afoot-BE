@@ -2,7 +2,9 @@ package com.GamesAfoot.Models;
 
 import jakarta.persistence.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Entity
 @Table(name = "progress")
@@ -20,24 +22,24 @@ public class Progress {
     @Column(name = "huntId")
     private Integer huntId;
 
-    @Column(name = "currentLocationIndex")
-    private Integer currentLocationIndex;
+    @Column(name = "targetLocationIndex")
+    private Integer targetLocationIndex;
 
 
-    @Column(name = "visitedLocations")
-    private ArrayList<Integer> visitedLocations;
+    @Column(name = "foundLocations")
+    private ArrayList<Object> foundLocations;
 
     @Column(name = "nextHint")
     private String nextHint;
 
     private Progress() {}
 
-    public Progress(Integer id, Integer userId, Integer huntId, Integer currentLocationIndex, ArrayList<Integer> visitedLocations, String nextHint) {
+    public Progress(Integer id, Integer userId, Integer huntId, Integer targetLocationIndex, ArrayList<Object> foundLocations, String nextHint) {
         this.id = id;
         this.userId = userId;
         this.huntId = huntId;
-        this.currentLocationIndex = currentLocationIndex;
-        this.visitedLocations = visitedLocations;
+        this.targetLocationIndex = targetLocationIndex;
+        this.foundLocations = foundLocations;
         this.nextHint = nextHint;
     }
 
@@ -48,11 +50,11 @@ public class Progress {
                 id: %d,
                 userId: %d,
                 huntId: %d,
-                currentLocationIndex: %d,
-                visitedLocations: %s,
+                targetLocationIndex: %d,
+                foundLocations: %s,
                 nextHint: %s
                 """,
-                id, userId, huntId, currentLocationIndex, visitedLocations, nextHint
+                id, userId, huntId, targetLocationIndex, foundLocations, nextHint
         );
     }
 
@@ -68,12 +70,12 @@ public class Progress {
         return this.huntId;
     }
 
-    public Integer getCurrentLocationIndex() {
-        return this.currentLocationIndex;
+    public Integer getTargetLocationIndex() {
+        return this.targetLocationIndex;
     }
 
-    public ArrayList<Integer> getVisitedLocations() {
-        return this.visitedLocations;
+    public ArrayList<Object> getFoundLocations() {
+        return this.foundLocations;
     }
 
     public String getNextHint() {
