@@ -5,8 +5,6 @@ import com.GamesAfoot.Repositories.ProgressRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 public class ProgressController {
 
@@ -17,7 +15,7 @@ public class ProgressController {
     }
 
     @GetMapping("/progress")
-    public Iterable<Progress> getProgress() {
+    public Iterable<Progress> getAllProgress() {
         return this.progressRepository.findAll();
     }
 
