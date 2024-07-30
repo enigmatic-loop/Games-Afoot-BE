@@ -1,7 +1,7 @@
 package com.GamesAfoot.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "location")
@@ -27,37 +27,23 @@ public class Location {
     @ElementCollection
     @CollectionTable(name = "location_clues", joinColumns = @JoinColumn(name = "location_id"))
     @Column(name = "clue")
-    private ArrayList<String> clues;
+    private List<String> clues;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hunt_id", nullable = false)
     private Hunt hunt;
 
+    // Default constructor
     public Location() {}
 
-    public Location(String name, String latitude, String longitude, String description, ArrayList<String> clues) {
+    // Parameterized constructor
+    public Location(String name, String latitude, String longitude, String description, List<String> clues) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.description = description;
         this.clues = clues;
     }
-
-    @Override
-    public String toString() {
-        return String.format(
-                """
-                id: %d,
-                name: %s,
-                latitude: %s,
-                longitude: %s,
-                description: %s,
-                clues: %s
-                """,
-                id, name, latitude, longitude, description, clues.toString()
-        );
-    }
-
 
     // Getters and Setters
     public Long getId() {
@@ -100,11 +86,11 @@ public class Location {
         this.description = description;
     }
 
-    public ArrayList<String> getClues() {
+    public List<String> getClues() {
         return clues;
     }
 
-    public void setClues(ArrayList<String> clues) {
+    public void setClues(List<String> clues) {
         this.clues = clues;
     }
 
@@ -114,5 +100,20 @@ public class Location {
 
     public void setHunt(Hunt hunt) {
         this.hunt = hunt;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                """
+                id: %d,
+                name: %s,
+                latitude: %s,
+                longitude: %s,
+                description: %s,
+                clues: %s
+                """,
+                id, name, latitude, longitude, description, clues
+        );
     }
 }

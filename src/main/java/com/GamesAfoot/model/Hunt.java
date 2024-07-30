@@ -1,7 +1,7 @@
 package com.GamesAfoot.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "hunt")
@@ -28,31 +28,18 @@ public class Hunt {
     private String gameType;
 
     @OneToMany(mappedBy = "hunt", cascade = CascadeType.ALL, orphanRemoval = true)
-    private ArrayList<Location> locations;
+    private List<Location> locations;
 
+    // Default constructor
     public Hunt() {}
 
+    // Parameterized constructor
     public Hunt(String startLatitude, String startLongitude, String distance, String numSites, String gameType) {
         this.startLatitude = startLatitude;
         this.startLongitude = startLongitude;
         this.distance = distance;
         this.numSites = numSites;
         this.gameType = gameType;
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                """
-                id: %d,
-                startLatitude: %s,
-                startLongitude: %s,
-                distance: %s,
-                numSites: %s,
-                gameType: %s
-                """,
-                id, startLatitude, startLongitude, distance, numSites, gameType
-        );
     }
 
     // Getters and Setters
@@ -104,12 +91,26 @@ public class Hunt {
         this.gameType = gameType;
     }
 
-    public ArrayList<Location> getLocations() {
+    public List<Location> getLocations() {
         return locations;
     }
 
-    public void setLocations(ArrayList<Location> locations) {
+    public void setLocations(List<Location> locations) {
         this.locations = locations;
     }
-}
 
+    @Override
+    public String toString() {
+        return String.format(
+                """
+                id: %d,
+                startLatitude: %s,
+                startLongitude: %s,
+                distance: %s,
+                numSites: %s,
+                gameType: %s
+                """,
+                id, startLatitude, startLongitude, distance, numSites, gameType
+        );
+    }
+}
