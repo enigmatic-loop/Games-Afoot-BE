@@ -7,139 +7,148 @@ import com.GamesAfoot.repository.LocationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/hunts")
 public class HuntController {
 
-    private final HuntRepository huntRepository;
-    private final LocationRepository locationRepository;
+    @Autowired
+    private HuntRepository huntRepository;
 
     @Autowired
-    public HuntController(HuntRepository huntRepository, LocationRepository locationRepository) {
-        this.huntRepository = huntRepository;
-        this.locationRepository = locationRepository;
-    }
+    private LocationRepository locationRepository;
 
-    private final String OPENAI_API_KEY = System.getenv("OPENAI_KEY");
-    private final String OPENAI_URL = "https://api.openai.com/v1/engines/gpt-4/completions";
+    @Value("${spring.ai.openai.api-key}")
+    private String openAiApiKey;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping
     public ResponseEntity<Hunt> createHunt(@RequestBody Hunt hunt) {
-        Hunt newHunt = huntRepository.save(hunt);
-        return ResponseEntity.status(201).body(newHunt);
+        System.out.println("Received request body: " + hunt);
+
+        // Print fields individually for debugging
+        System.out.println("Start Latitude: " + hunt.getStartLatitude());
+        System.out.println("Start Longitude: " + hunt.getStartLongitude());
+        System.out.println("Distance: " + hunt.getDistance());
+        System.out.println("Num Sites: " + hunt.getNumSites());
+        System.out.println("Game Type: " + hunt.getGameType());
+
+        Hunt savedHunt = huntRepository.save(hunt);
+        System.out.println("Saved hunt: " + savedHunt);
+
+        return ResponseEntity.status(201).body(savedHunt);
     }
 
     @GetMapping
     public ResponseEntity<List<Hunt>> getHunts() {
         List<Hunt> hunts = huntRepository.findAll();
+        System.out.println("Retrieved hunts: " + hunts);
+
         return ResponseEntity.ok(hunts);
     }
 
     @GetMapping("/{id}/locations")
     public ResponseEntity<?> getHuntLocations(@PathVariable Long id) {
-        Optional<Hunt> huntOpt = huntRepository.findById(id);
-        if (huntOpt.isPresent()) {
-            List<Location> locations = locationRepository.findByHuntId(huntOpt.get().getId());
-            return ResponseEntity.ok(locations);
+        System.out.println("Requested hunt ID: " + id);
+
+        Hunt hunt = huntRepository.findById(id).orElse(null);
+
+        if (hunt == null) {
+            System.out.println("Hunt with ID " + id + " not found.");
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.status(404).body("No hunt found for ID " + id);
+
+        List<Location> locations = locationRepository.findByHuntId(id);
+        System.out.println("Retrieved locations: " + locations);
+
+        return ResponseEntity.ok(locations);
     }
 
     @PostMapping("/{id}/generate_locations")
-    public ResponseEntity<?> addLocations(@PathVariable Long id) throws JsonProcessingException {
-        Optional<Hunt> huntOpt = huntRepository.findById(id);
-        if (!huntOpt.isPresent()) {
-            return ResponseEntity.status(404).body("No hunt found for ID " + id);
-        }
+    public ResponseEntity<String> generateLocations(@PathVariable Long id) {
+        System.out.println("Requested to generate locations for hunt ID: " + id);
 
-        Hunt hunt = huntOpt.get();
+        Hunt hunt = huntRepository.findById(id).orElse(null);
+
+        if (hunt == null) {
+            System.out.println("Hunt with ID " + id + " not found.");
+            return ResponseEntity.notFound().build();
+        }
 
         if (!hunt.getLocations().isEmpty()) {
-            return ResponseEntity.status(201).body("Locations already generated for Hunt ID " + hunt.getId());
+            return ResponseEntity.status(201).body("Locations already generated for Hunt ID " + id);
         }
 
-        String locationsData = generateLocations(hunt);
-
+        ChatResponse locationsData = generateLocationsFromAI(hunt);
         if (locationsData == null) {
             return ResponseEntity.status(500).body("Failed to generate locations");
         }
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(locationsData);
-        List<Location> locations = new ArrayList<>();
-        for (JsonNode node : jsonNode) {
-            Location location = new Location();
-            location.setName(node.get("name").asText());
-            location.setLatitude(node.get("latitude").asText());
-            location.setLongitude(node.get("longitude").asText());
-            location.setDescription(node.get("description").asText());
-            location.setClues(new ArrayList<>(mapper.convertValue(node.get("clues"), List.class)));
-            location.setHunt(hunt);
-            locations.add(location);
-        }
+        System.out.println("Generated locations data: " + locationsData);
 
-        locationRepository.saveAll(locations);
-        return ResponseEntity.status(201).body("Locations successfully added to Hunt ID " + hunt.getId());
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateHunt(@PathVariable Long id, @RequestBody Hunt huntDetails) {
-        Optional<Hunt> huntOpt = huntRepository.findById(id);
-        if (huntOpt.isPresent()) {
-            Hunt hunt = huntOpt.get();
-            hunt.setStartLatitude(huntDetails.getStartLatitude());
-            hunt.setStartLongitude(huntDetails.getStartLongitude());
-            hunt.setDistance(huntDetails.getDistance());
-            hunt.setNumSites(huntDetails.getNumSites());
-            hunt.setGameType(huntDetails.getGameType());
-            Hunt updatedHunt = huntRepository.save(hunt);
-            return ResponseEntity.ok(updatedHunt);
-        }
-        return ResponseEntity.status(404).body("No hunt found for ID " + id);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteHunt(@PathVariable Long id) {
-        Optional<Hunt> huntOpt = huntRepository.findById(id);
-        if (huntOpt.isPresent()) {
-            huntRepository.delete(huntOpt.get());
-            return ResponseEntity.ok("Hunt ID " + id + " deleted successfully");
-        }
-        return ResponseEntity.status(404).body("No hunt found for ID " + id);
-    }
-
-    private String generateLocations(Hunt hunt) {
-        String inputMessage = String.format(
-                "Generate a JSON array of %s %s within exactly %s miles from the user's location, which is (%s, %s) from start to finish. DO NOT GO OUT OF BOUNDS OF THE WALKING DISTANCE. DO NOT MAKE UP FICTIONAL LOCATIONS. Each object should include a string data type for 'name', 'latitude', 'longitude', 'description', and a JSON array of 3 'clues'. Make sure to ONLY respond with a JSON ARRAY, without any characters before or after the JSON, and NEVER A STRING REPRESENTATION OF THE JSON ARRAY. Note: If you cannot find real and legitimate locations in the user's location that meet the prompt's request, then just insert the string values in the JSON prompting the user as to why you couldn't find any more real locations within the distance given, whether that's distance requirements or the kind of things they want to see in their treasure hunt.",
-                hunt.getNumSites(), hunt.getGameType(), hunt.getDistance(), hunt.getStartLatitude(), hunt.getStartLongitude()
-        );
-
-        RestTemplate restTemplate = new RestTemplate();
-        String requestBody = "{\"prompt\": \"" + inputMessage + "\", \"max_tokens\": 1024}";
-
+        List<Location> newLocations;
         try {
-            return restTemplate.postForObject(OPENAI_URL, createHttpEntity(requestBody), String.class);
-        } catch (Exception e) {
+            JsonNode jsonNode = objectMapper.readTree(String.valueOf(locationsData));
+            newLocations = new ArrayList<>();
+            for (JsonNode node : jsonNode) {
+                Location location = new Location();
+                location.setName(node.get("name").asText());
+                location.setLatitude(node.get("latitude").asText());
+                location.setLongitude(node.get("longitude").asText());
+                location.setDescription(node.get("description").asText());
+                List<String> clues = new ArrayList<>();
+                node.get("clues").forEach(clueNode -> clues.add(clueNode.asText()));
+                location.setClues(clues);
+                location.setHunt(hunt);
+                newLocations.add(location);
+            }
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return null;
+            return ResponseEntity.status(500).body("Failed to parse generated locations");
         }
+
+        locationRepository.saveAll(newLocations);
+        System.out.println("Saved locations for hunt ID " + id);
+
+        return ResponseEntity.status(201).body("Locations successfully added to Hunt ID " + id);
     }
 
-    private HttpEntity<String> createHttpEntity(String body) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + OPENAI_API_KEY);
-        headers.set("Content-Type", "application/json");
-        return new HttpEntity<>(body, headers);
+    private ChatResponse generateLocationsFromAI(Hunt hunt) {
+        var openAiApi = new OpenAiApi(System.getenv("OPENAI_API_KEY"));
+        var openAiChatOptions = OpenAiChatOptions.builder()
+                .withModel("gpt-40-mini")
+                .build();
+        var chatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
+
+
+        ChatResponse response = chatModel.call(
+                new Prompt(String.format(
+                        "Generate a JSON array of %s %s within exactly %s miles from the user's location, which is (%s, %s) from start to finish. DO NOT GO OUT OF BOUNDS OF THE WALKING DISTANCE. DO NOT MAKE UP FICTIONAL LOCATIONS. Each object should include a string data type for 'name', 'latitude', 'longitude', 'description', and a JSON array of 3 'clues'. Make sure to ONLY respond with a JSON ARRAY, without any characters before or after the JSON, and NEVER A STRING REPRESENTATION OF THE JSON ARRAY. Note: If you can not find real and legitimate locations in the user's location that meet the prompt's request, then just insert the string values in the JSON prompting the user as to why you couldn't find anymore real locations within the distance given, whether that's distance requirements or the kind of things they want to see in their treasure hunt.",
+                        hunt.getNumSites(), hunt.getGameType(), hunt.getDistance(), hunt.getStartLatitude(), hunt.getStartLongitude())));
+
+
+
+        System.out.println("AI response: " + response);
+        return response;
     }
 }
+
+
+

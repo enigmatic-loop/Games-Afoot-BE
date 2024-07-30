@@ -8,8 +8,7 @@ import java.util.List;
 public class Hunt {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "start_latitude")
@@ -30,19 +29,8 @@ public class Hunt {
     @OneToMany(mappedBy = "hunt", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Location> locations;
 
-    // Default constructor
-    public Hunt() {}
+    // Getters and setters
 
-    // Parameterized constructor
-    public Hunt(String startLatitude, String startLongitude, String distance, String numSites, String gameType) {
-        this.startLatitude = startLatitude;
-        this.startLongitude = startLongitude;
-        this.distance = distance;
-        this.numSites = numSites;
-        this.gameType = gameType;
-    }
-
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -101,16 +89,14 @@ public class Hunt {
 
     @Override
     public String toString() {
-        return String.format(
-                """
-                id: %d,
-                startLatitude: %s,
-                startLongitude: %s,
-                distance: %s,
-                numSites: %s,
-                gameType: %s
-                """,
-                id, startLatitude, startLongitude, distance, numSites, gameType
-        );
+        return "Hunt{" +
+                "id=" + id +
+                ", startLatitude='" + startLatitude + '\'' +
+                ", startLongitude='" + startLongitude + '\'' +
+                ", distance='" + distance + '\'' +
+                ", numSites='" + numSites + '\'' +
+                ", gameType='" + gameType + '\'' +
+                ", locations=" + locations +
+                '}';
     }
 }

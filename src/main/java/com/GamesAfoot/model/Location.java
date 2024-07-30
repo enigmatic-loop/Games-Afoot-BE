@@ -8,8 +8,7 @@ import java.util.List;
 public class Location {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
@@ -25,27 +24,15 @@ public class Location {
     private String description;
 
     @ElementCollection
-    @CollectionTable(name = "location_clues", joinColumns = @JoinColumn(name = "location_id"))
-    @Column(name = "clue")
+    @Column(name = "clues")
     private List<String> clues;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hunt_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "hunt_id")
     private Hunt hunt;
 
-    // Default constructor
-    public Location() {}
+    // Getters and setters
 
-    // Parameterized constructor
-    public Location(String name, String latitude, String longitude, String description, List<String> clues) {
-        this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.description = description;
-        this.clues = clues;
-    }
-
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -104,16 +91,14 @@ public class Location {
 
     @Override
     public String toString() {
-        return String.format(
-                """
-                id: %d,
-                name: %s,
-                latitude: %s,
-                longitude: %s,
-                description: %s,
-                clues: %s
-                """,
-                id, name, latitude, longitude, description, clues
-        );
+        return "Location{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", description='" + description + '\'' +
+                ", clues=" + clues +
+                ", hunt=" + hunt +
+                '}';
     }
 }
