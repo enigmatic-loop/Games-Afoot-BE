@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/hunts")
@@ -32,9 +33,6 @@ public class HuntController {
 
     @Autowired
     private LocationRepository locationRepository;
-
-    @Value("${spring.ai.openai.api-key}")
-    private String openAiApiKey;
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -103,9 +101,11 @@ public class HuntController {
 
         System.out.println("Generated locations data: " + locationsData);
 
+        // Updated code starts here
+        String responseContent = locationsData.toString().trim();  // Adjust if `toString()` is not appropriate
         List<Location> newLocations;
         try {
-            JsonNode jsonNode = objectMapper.readTree(String.valueOf(locationsData));
+            JsonNode jsonNode = objectMapper.readTree(cleanResponseContent(responseContent));
             newLocations = new ArrayList<>();
             for (JsonNode node : jsonNode) {
                 Location location = new Location();
@@ -119,10 +119,12 @@ public class HuntController {
                 location.setHunt(hunt);
                 newLocations.add(location);
             }
+            System.out.println("newLocations line 109:" + newLocations);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Failed to parse generated locations");
         }
+        // Updated code ends here
 
         locationRepository.saveAll(newLocations);
         System.out.println("Saved locations for hunt ID " + id);
@@ -133,24 +135,24 @@ public class HuntController {
     private ChatResponse generateLocationsFromAI(Hunt hunt) {
         var openAiApi = new OpenAiApi(System.getenv("OPENAI_KEY"));
         var openAiChatOptions = OpenAiChatOptions.builder()
-                .withModel("gpt-4-turbo")
+                .withModel("gpt-3.5-turbo")
                 .withTemperature((float) 0.4F)
-                .withMaxTokens(200)
                 .build();
         var chatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
-
 
         ChatResponse response = chatModel.call(
                 new Prompt(String.format(
                         "Generate a JSON array of %s %s within exactly %s linear miles from the user's location, which is (%s, %s) from start to finish. DO NOT GO OUT OF BOUNDS OF THE WALKING DISTANCE. DO NOT MAKE UP FICTIONAL LOCATIONS. Each object should include a string data type for 'name', 'latitude', 'longitude', 'description', and a JSON array of 3 'clues'. Make sure to ONLY respond with a JSON ARRAY, without any characters before or after the JSON, and NEVER A STRING REPRESENTATION OF THE JSON ARRAY. Note: If you can not find real and legitimate locations in the user's location that meet the prompt's request, then just insert the string values in the JSON prompting the user as to why you couldn't find anymore real locations within the distance given, whether that's distance requirements or the kind of things they want to see in their treasure hunt.",
                         hunt.getNumSites(), hunt.getGameType(), hunt.getDistance(), hunt.getStartLatitude(), hunt.getStartLongitude())));
 
-
-
-        System.out.println("AI response: " + response);
+//        System.out.println("AI response: " + response);
+        System.out.println("response.getResult().getOutput().getContent():  " + response.getResult().getOutput().getContent());
         return response;
     }
+
+    private String cleanResponseContent(String inputStr) {
+        // Clean inputStr to make it valid JSON by removing all non-JSON characters
+        String cleanedStr = inputStr.replaceAll("[^\\[\\]\\{\\}\",:0-9a-zA-Z\\s]", "");
+        return cleanedStr;
+    }
 }
-
-
-
