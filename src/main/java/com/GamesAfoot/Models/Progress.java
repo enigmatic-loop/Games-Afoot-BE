@@ -11,36 +11,31 @@ import java.util.Objects;
 public class Progress {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "userId")
+    @Column(name = "userId", nullable = false)
     private Integer userId;
 
-    @Column(name = "huntId")
+    @Column(name = "huntId", nullable = false, updatable = false)
     private Integer huntId;
 
-    @Column(name = "targetLocationIndex")
+    @Column(name = "targetLocationIndex", nullable = false)
     private Integer targetLocationIndex;
 
-
-    @Column(name = "foundLocations")
-    private ArrayList<Object> foundLocations;
-
-    @Column(name = "nextHint")
-    private String nextHint;
+    @Column(name = "gameComplete", nullable = false)
+    private Boolean gameComplete;
 
     private Progress() {}
 
-    public Progress(Integer id, Integer userId, Integer huntId, Integer targetLocationIndex, ArrayList<Object> foundLocations, String nextHint) {
+    public Progress(Integer id, Integer userId, Integer huntId, Integer targetLocationIndex, Boolean gameComplete) {
         this.id = id;
         this.userId = userId;
         this.huntId = huntId;
         this.targetLocationIndex = targetLocationIndex;
-        this.foundLocations = foundLocations;
-        this.nextHint = nextHint;
+        this.gameComplete = gameComplete;
     }
 
     @Override
@@ -51,13 +46,13 @@ public class Progress {
                 userId: %d,
                 huntId: %d,
                 targetLocationIndex: %d,
-                foundLocations: %s,
-                nextHint: %s
+                gameComplete: %b
                 """,
-                id, userId, huntId, targetLocationIndex, foundLocations, nextHint
+                id, userId, huntId, targetLocationIndex, gameComplete
         );
     }
 
+    // Getters
     public Integer getId() {
         return this.id;
     }
@@ -74,11 +69,18 @@ public class Progress {
         return this.targetLocationIndex;
     }
 
-    public ArrayList<Object> getFoundLocations() {
-        return this.foundLocations;
+    public Boolean getGameComplete() {
+        return this.gameComplete;
     }
 
-    public String getNextHint() {
-        return this.nextHint;
+
+    // Setters
+    public void setTargetLocationIndex(Integer index) {
+        this.targetLocationIndex = index;
     }
+
+    public void setGameComplete(Boolean complete) {
+        this.gameComplete = complete;
+    }
+
 }

@@ -4,6 +4,7 @@ import com.GamesAfoot.Models.Progress;
 import com.GamesAfoot.Controllers.ProgressController;
 import com.GamesAfoot.Repositories.ProgressRepository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.http.MediaType;
@@ -44,39 +46,54 @@ public class ProgressControllerTest {
     @InjectMocks
     private ProgressController progressController;
 
+    private Progress progress;
+
+    @BeforeEach
+    public void init() {
+        progress = new Progress(1, 1, 1, 0, false);
+    }
+
+    // GET route tests
     @Test
     public void getAllProgressReturns200() throws Exception {
-        this.mockMvc.perform(get(PROGRESS_URL)).andDo(print()).andExpect(status().isOk());
+        mockMvc.perform(get(PROGRESS_URL)).andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void postProgressReturns201() throws Exception {
-        ArrayList<Object> foundLocations = new ArrayList<>(Arrays.asList(1, true));
-        foundLocations.add(2, true);
-        foundLocations.add(3, false);
-        Progress progress = new Progress(1, 1, 1, 1, foundLocations, "You are close!");
+    public void getAllProgressContainsObject() throws Exception {
+        mockMvc.perform(get(PROGRESS_URL))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").exists())
+                .andExpect(jsonPath("$[0].userId").exists())
+                .andExpect(jsonPath("$[0].huntId").exists())
+                .andExpect(jsonPath("$[0].targetLocationIndex").exists())
+                .andExpect(jsonPath("$[0].gameComplete").exists());
+    }
 
+    @Test
+    public void getAllProgressIsNotNull() throws Exception {
+        given(progressRepository.findAll())
+                .willReturn(List.of(progress));
+        Iterable<Progress> progressList = progressController.getAllProgress();
+
+        assertThat(progressList).isNotNull();
+    }
+
+    // POST route tests
+    @Test
+    public void postProgressReturns201() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                 .post(PROGRESS_URL)
                 .content(objectMapper.writeValueAsString(progress))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.huntId").exists());
-    }
-
-    @Test
-    public void getAllProgressIsNotNull() throws Exception {
-        ArrayList<Object> foundLocations = new ArrayList<>(Arrays.asList(1, true));
-        foundLocations.add(2, true);
-        foundLocations.add(3, false);
-        Progress progress = new Progress(1,1, 1, 1, foundLocations, "You are close!");
-
-        given(progressRepository.findAll())
-                .willReturn(List.of(progress));
-        Iterable<Progress> progressList = progressController.getAllProgress();
-
-        assertThat(progressList).isNotNull();
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.huntId").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.targetLocationIndex").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gameComplete").exists());
     }
 
 }
