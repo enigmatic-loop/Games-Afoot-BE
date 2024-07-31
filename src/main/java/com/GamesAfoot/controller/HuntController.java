@@ -131,16 +131,18 @@ public class HuntController {
     }
 
     private ChatResponse generateLocationsFromAI(Hunt hunt) {
-        var openAiApi = new OpenAiApi(System.getenv("OPENAI_API_KEY"));
+        var openAiApi = new OpenAiApi(System.getenv("OPENAI_KEY"));
         var openAiChatOptions = OpenAiChatOptions.builder()
-                .withModel("gpt-40-mini")
+                .withModel("gpt-4-turbo")
+                .withTemperature((float) 0.4F)
+                .withMaxTokens(200)
                 .build();
         var chatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
 
 
         ChatResponse response = chatModel.call(
                 new Prompt(String.format(
-                        "Generate a JSON array of %s %s within exactly %s miles from the user's location, which is (%s, %s) from start to finish. DO NOT GO OUT OF BOUNDS OF THE WALKING DISTANCE. DO NOT MAKE UP FICTIONAL LOCATIONS. Each object should include a string data type for 'name', 'latitude', 'longitude', 'description', and a JSON array of 3 'clues'. Make sure to ONLY respond with a JSON ARRAY, without any characters before or after the JSON, and NEVER A STRING REPRESENTATION OF THE JSON ARRAY. Note: If you can not find real and legitimate locations in the user's location that meet the prompt's request, then just insert the string values in the JSON prompting the user as to why you couldn't find anymore real locations within the distance given, whether that's distance requirements or the kind of things they want to see in their treasure hunt.",
+                        "Generate a JSON array of %s %s within exactly %s linear miles from the user's location, which is (%s, %s) from start to finish. DO NOT GO OUT OF BOUNDS OF THE WALKING DISTANCE. DO NOT MAKE UP FICTIONAL LOCATIONS. Each object should include a string data type for 'name', 'latitude', 'longitude', 'description', and a JSON array of 3 'clues'. Make sure to ONLY respond with a JSON ARRAY, without any characters before or after the JSON, and NEVER A STRING REPRESENTATION OF THE JSON ARRAY. Note: If you can not find real and legitimate locations in the user's location that meet the prompt's request, then just insert the string values in the JSON prompting the user as to why you couldn't find anymore real locations within the distance given, whether that's distance requirements or the kind of things they want to see in their treasure hunt.",
                         hunt.getNumSites(), hunt.getGameType(), hunt.getDistance(), hunt.getStartLatitude(), hunt.getStartLongitude())));
 
 
