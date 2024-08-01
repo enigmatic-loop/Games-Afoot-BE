@@ -13,16 +13,13 @@ import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/hunts")
@@ -102,7 +99,7 @@ public class HuntController {
         System.out.println("Generated locations data: " + locationsData);
 
         // Updated code starts here
-        String responseContent = locationsData.toString().trim();  // Adjust if `toString()` is not appropriate
+        String responseContent = locationsData.getResult().getOutput().getContent().trim();  // Adjust if `.toString()` is appropriate
         List<Location> newLocations;
         try {
             JsonNode jsonNode = objectMapper.readTree(cleanResponseContent(responseContent));
@@ -135,8 +132,9 @@ public class HuntController {
     private ChatResponse generateLocationsFromAI(Hunt hunt) {
         var openAiApi = new OpenAiApi(System.getenv("OPENAI_KEY"));
         var openAiChatOptions = OpenAiChatOptions.builder()
-                .withModel("gpt-3.5-turbo")
-                .withTemperature((float) 0.4F)
+                .withModel("gpt-4o")
+                .withTemperature((float) 0.2F)
+                .withTopP((float) 1.0F)
                 .build();
         var chatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
 
@@ -149,6 +147,8 @@ public class HuntController {
         System.out.println("response.getResult().getOutput().getContent():  " + response.getResult().getOutput().getContent());
         return response;
     }
+
+
 
     private String cleanResponseContent(String inputStr) {
         // Clean inputStr to make it valid JSON by removing all non-JSON characters
