@@ -1,4 +1,4 @@
-package com.GamesAfoot.Controllers;
+package com.GamesAfoot.controllers;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.web.bind.annotation.GetMapping;

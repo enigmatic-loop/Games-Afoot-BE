@@ -1,4 +1,4 @@
-package com.GamesAfoot.Configs;
+package com.GamesAfoot.configs;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.context.annotation.Bean;
