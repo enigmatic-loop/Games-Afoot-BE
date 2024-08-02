@@ -53,7 +53,6 @@ public class HuntController {
 
     @GetMapping
     public ResponseEntity<List<Hunt>> getHunts() {
-        System.out.println("Findall: ");
         List<Hunt> hunts = huntRepository.findAll();
         System.out.println("Retrieved hunts: " + hunts);
 
