@@ -1,10 +1,6 @@
-package com.GamesAfoot.Models;
+package com.GamesAfoot.models;
 
 import jakarta.persistence.*;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Objects;
 
 @Entity
 @Table(name = "progress")
