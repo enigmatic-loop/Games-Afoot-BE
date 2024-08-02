@@ -34,8 +34,5 @@ build/
 
 shell.log
 
-.env
-/.env
-*env
-
 .DS_Store
+.env
