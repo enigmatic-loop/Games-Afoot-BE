@@ -36,6 +36,15 @@ public class ProgressService {
                 .orElseThrow(() -> new ProgressNotFoundException(id));
     }
 
+    public Progress completeGameById(Integer id) {
+        return progressRepository.findById(id)
+                .map(progress -> {
+                    progress.setGameComplete(true);
+                    return progressRepository.save(progress);
+                })
+                .orElseThrow(() -> new ProgressNotFoundException(id));
+    }
+
     public Boolean deleteProgressById(Integer id) {
         Optional<Progress> progress = progressRepository.findById(id);
         if (progress.isPresent()) {
