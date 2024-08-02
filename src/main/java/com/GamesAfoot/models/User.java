@@ -1,4 +1,4 @@
-package com.GamesAfoot.Models;
+package com.GamesAfoot.models;
 
 import jakarta.persistence.*;
 

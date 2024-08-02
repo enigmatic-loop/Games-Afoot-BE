@@ -1,6 +1,6 @@
-package com.GamesAfoot.Exceptions;
+package com.GamesAfoot.exceptions;
 
-import com.GamesAfoot.Models.Progress;
+import com.GamesAfoot.models.Progress;
 
 public class InvalidInputException extends RuntimeException{
 
