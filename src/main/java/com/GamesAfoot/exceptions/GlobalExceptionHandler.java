@@ -1,4 +1,4 @@
-package com.GamesAfoot.exception;
+package com.GamesAfoot.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

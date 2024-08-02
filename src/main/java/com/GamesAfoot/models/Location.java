@@ -1,4 +1,4 @@
-package com.GamesAfoot.model;
+package com.GamesAfoot.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
