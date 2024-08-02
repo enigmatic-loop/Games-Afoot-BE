@@ -1,5 +1,6 @@
 package com.GamesAfoot.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -26,11 +27,24 @@ public class Hunt {
     @Column(name = "game_type")
     private String gameType;
 
-    @OneToMany(mappedBy = "hunt", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "hunt", cascade = CascadeType.ALL, orphanRemoval = false)
+    @JsonManagedReference
     private List<Location> locations;
 
-    // Getters and setters
+    // Default constructor
+    public Hunt() {}
 
+    // Parameterized constructor
+    public Hunt(String startLatitude, String startLongitude, String distance, String numSites, String gameType, List<Location> locations) {
+        this.startLatitude = startLatitude;
+        this.startLongitude = startLongitude;
+        this.distance = distance;
+        this.numSites = numSites;
+        this.gameType = gameType;
+        this.locations = locations;
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -85,6 +99,11 @@ public class Hunt {
 
     public void setLocations(List<Location> locations) {
         this.locations = locations;
+    }
+
+    public void addLocation(Location location) {
+        locations.add(location);
+        location.setHunt(this);  // Ensure bidirectional relationship is maintained
     }
 
     @Override

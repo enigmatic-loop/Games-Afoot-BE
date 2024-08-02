@@ -53,6 +53,7 @@ public class HuntController {
 
     @GetMapping
     public ResponseEntity<List<Hunt>> getHunts() {
+        System.out.println("Findall: ");
         List<Hunt> hunts = huntRepository.findAll();
         System.out.println("Retrieved hunts: " + hunts);
 
@@ -73,6 +74,13 @@ public class HuntController {
         List<Location> locations = locationRepository.findByHuntId(id);
         System.out.println("Retrieved locations: " + locations);
 
+        return ResponseEntity.ok(locations);
+    }
+
+    //Get ALL LOCATIONS OF ALL HUNTS
+    @GetMapping("/allLocations")
+    public ResponseEntity<List<Location>> getAllLocations() {
+        List<Location> locations = locationRepository.findAll();
         return ResponseEntity.ok(locations);
     }
 
@@ -116,14 +124,15 @@ public class HuntController {
                 location.setHunt(hunt);
                 newLocations.add(location);
             }
-            System.out.println("newLocations line 109:" + newLocations);
+            hunt.setLocations(newLocations);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Failed to parse generated locations");
         }
         // Updated code ends here
-
-        locationRepository.saveAll(newLocations);
+//        locationRepository.saveAll(newLocations);
+        System.out.println("LINE 129");
+        huntRepository.save(hunt);
         System.out.println("Saved locations for hunt ID " + id);
 
         return ResponseEntity.status(201).body("Locations successfully added to Hunt ID " + id);
@@ -155,4 +164,6 @@ public class HuntController {
         String cleanedStr = inputStr.replaceAll("[^\\[\\]\\{\\}\",:0-9a-zA-Z\\s]", "");
         return cleanedStr;
     }
+
+
 }
