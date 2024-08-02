@@ -45,7 +45,6 @@ public class ProgressControllerUnitTest {
         progress = new Progress(1, 1, 1, 3, false);
     }
 
-    // GET route tests
     @Test
     public void testGetAllProgress() throws Exception {
         when(progressService.getAllProgress()).thenReturn(Collections.singletonList(progress));
@@ -86,22 +85,26 @@ public class ProgressControllerUnitTest {
             )
                 .andDo(print())
                 .andExpect(status().isCreated());
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.id", is(1)))
-//                .andExpect(jsonPath("$.userId", is(1)))
-//                .andExpect(jsonPath("$.huntId", is(1)))
-//                .andExpect(jsonPath("$.targetLocationIndex", is(3)))
-//                .andExpect(jsonPath("$.gameComplete", is(false)))
-//                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
-    public void testUpdateProgress() throws Exception {
-        when(progressService.updateProgressById(progress.getId())).thenReturn(progress);
-        mockMvc.perform(patch(PROGRESS_URL + "/" + 1))
+    public void testUpdateProgressById() throws Exception {
+        when(progressService.updateProgressById(progress.getId())).thenReturn(new Progress(null, 1 ,2, 4, false));
+        mockMvc.perform(patch(PROGRESS_URL + "/" + 1 + "/update-progress"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.targetLocationIndex", is(4)));
+    }
+
+    @Test
+    public void testCompleteGameById() throws Exception {
+        when(progressService.completeGameById(progress.getId())).thenReturn(new Progress(1, 1 ,2, 3, true));
+        mockMvc.perform(patch(PROGRESS_URL + "/" + 1 + "/complete-game"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.gameComplete", is(true)));
     }
 
     @Test

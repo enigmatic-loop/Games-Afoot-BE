@@ -80,4 +80,34 @@ public class ProgressServiceUnitTest {
         assertEquals(1, progressCreated.getTargetLocationIndex());
         assertEquals(false, progressCreated.getGameComplete());
     }
+
+    @Test
+    void testUpdateProgressByIdIncrementsTargetLocationIndex() {
+        Progress progress = new Progress(5, 1, 1, 0, false);
+        Progress updatedProgress = new Progress(5, 1, 1, 1, false);
+        when(progressRepository.findById(5)).thenReturn(Optional.of(progress));
+        when(progressRepository.save(progress)).thenReturn(updatedProgress);
+        progressService.completeGameById(5);
+        assertNotNull(progress.getId());
+        assertEquals(5, updatedProgress.getId());
+        assertEquals(1, updatedProgress.getUserId());
+        assertEquals(1, updatedProgress.getHuntId());
+        assertEquals(1, updatedProgress.getTargetLocationIndex());
+        assertEquals(false, updatedProgress.getGameComplete());
+    }
+
+    @Test
+    void testCompleteGameById() {
+        Progress progress = new Progress(5, 1, 1, 0, false);
+        Progress completedProgress = new Progress(5, 1, 1, 5, true);
+        when(progressRepository.findById(5)).thenReturn(Optional.of(progress));
+        when(progressRepository.save(progress)).thenReturn(completedProgress);
+        progressService.completeGameById(5);
+        assertNotNull(progress.getId());
+        assertEquals(5, completedProgress.getId());
+        assertEquals(1, completedProgress.getUserId());
+        assertEquals(1, completedProgress.getHuntId());
+        assertEquals(5, completedProgress.getTargetLocationIndex());
+        assertEquals(true, completedProgress.getGameComplete());
+    }
 }

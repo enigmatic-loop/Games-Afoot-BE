@@ -42,9 +42,14 @@ public class ProgressController {
     }
 
     // PATCH routes
-    @PatchMapping("/progress/{id}")
+    @PatchMapping("/progress/{id}/update-progress")
     public ResponseEntity<Progress> updateProgress(@PathVariable Integer id) {
         return ResponseEntity.ok().body(progressService.updateProgressById(id));
+    }
+
+    @PatchMapping("/progress/{id}/complete-game")
+    public ResponseEntity<Progress> completeGameById(@PathVariable Integer id) {
+        return ResponseEntity.ok().body(progressService.completeGameById(id));
     }
 
     // DELETE routes
