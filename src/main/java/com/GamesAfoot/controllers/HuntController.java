@@ -109,7 +109,7 @@ public class HuntController {
         String responseContent = locationsData.getResult().getOutput().getContent().trim();  // Adjust if `.toString()` is appropriate
         List<Location> newLocations;
         try {
-            JsonNode jsonNode = objectMapper.readTree(cleanResponseContent(responseContent));
+            JsonNode jsonNode = objectMapper.readTree(responseContent);
             newLocations = new ArrayList<>();
             for (JsonNode node : jsonNode) {
                 Location location = new Location();
@@ -154,14 +154,6 @@ public class HuntController {
 //        System.out.println("AI response: " + response);
         System.out.println("response.getResult().getOutput().getContent():  " + response.getResult().getOutput().getContent());
         return response;
-    }
-
-
-
-    private String cleanResponseContent(String inputStr) {
-        // Clean inputStr to make it valid JSON by removing all non-JSON characters
-        String cleanedStr = inputStr.replaceAll("[^\\[\\]\\{\\}\",:0-9a-zA-Z\\s]", "");
-        return cleanedStr;
     }
 
 
