@@ -140,16 +140,17 @@ public class HuntController {
     private ChatResponse generateLocationsFromAI(Hunt hunt) {
         var openAiApi = new OpenAiApi(System.getenv("OPENAI_KEY"));
         var openAiChatOptions = OpenAiChatOptions.builder()
-                .withModel("gpt-4o")
-                .withTemperature((float) 0.2F)
+                .withModel("gpt-3.5-turbo")
+                .withTemperature((float) 0.7F)
                 .withTopP((float) 1.0F)
                 .build();
         var chatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
 
         ChatResponse response = chatModel.call(
                 new Prompt(String.format(
-                        "Generate a JSON array of %s %s within exactly %s linear miles from the user's location, which is (%s, %s) from start to finish. DO NOT GO OUT OF BOUNDS OF THE WALKING DISTANCE. DO NOT MAKE UP FICTIONAL LOCATIONS. Each object should include a string data type for 'name', 'latitude', 'longitude', 'description', and a JSON array of 3 'clues'. Make sure to ONLY respond with a JSON ARRAY, without any characters before or after the JSON, and NEVER A STRING REPRESENTATION OF THE JSON ARRAY. Note: If you can not find real and legitimate locations in the user's location that meet the prompt's request, then just insert the string values in the JSON prompting the user as to why you couldn't find anymore real locations within the distance given, whether that's distance requirements or the kind of things they want to see in their treasure hunt.",
+                        "Generate a JSON array of %s %s within exactly %s linear miles from the user's location, which is (%s, %s) from start to finish. DO NOT GO OUT OF BOUNDS OF THE WALKING DISTANCE. Ensure that all locations are real and legitimate, and include a diverse range of sites as appropriate. Each object should include a string data type for 'name', a floating-point number for 'latitude', a floating-point number for 'longitude', 'description', and a JSON array of 3 'clues'. Make sure to ONLY respond with a JSON ARRAY, without any characters before or after the JSON, and NEVER A STRING REPRESENTATION OF THE JSON ARRAY. Ensure that all latitude and longitude values are accurate and properly formatted as floating-point numbers. Note: If you cannot find real and legitimate locations in the user's location that meet the prompt's request, provide a suitable message explaining the issue, without excluding any particular community or culture.",
                         hunt.getNumSites(), hunt.getGameType(), hunt.getDistance(), hunt.getStartLatitude(), hunt.getStartLongitude())));
+
 
 //        System.out.println("AI response: " + response);
         System.out.println("response.getResult().getOutput().getContent():  " + response.getResult().getOutput().getContent());
