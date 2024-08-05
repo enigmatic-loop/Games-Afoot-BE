@@ -23,4 +23,5 @@ class AIController {
 						.call()
 						.content());
 	}
+
 }
