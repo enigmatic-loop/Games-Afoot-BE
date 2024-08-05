@@ -22,6 +22,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 import java.util.List;
 
@@ -69,8 +70,8 @@ public class ProgressIntegrationTest {
     @Test
     void shouldGetAllProgress() throws Exception {
         List<Progress> progressList = List.of(
-                new Progress(1, 1, 1, 0, false),
-                new Progress(2, 1, 2, 3, true)
+                new Progress(null, 2, 1, 0, false),
+                new Progress(null, 1, 2, 3, true)
         );
         progressRepository.saveAll(progressList);
 
@@ -83,36 +84,31 @@ public class ProgressIntegrationTest {
                 .body(".", hasSize(2));
     }
 
-//    @Test
-//    void testCreateProgress() throws Exception {
-//        Progress progress = new Progress(1, 1, 1, 0, false);
-//
-//        mockMvc.perform(post(PROGRESS_URL)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(objectMapper.writeValueAsString(progress)))
-//                .andExpect(status().isCreated())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.id", is(1)))
-//                .andExpect(jsonPath("$.userId", is(1)))
-//                .andExpect(jsonPath("$.huntId", is(1)))
-//                .andExpect(jsonPath("$.targetLocationIndex", is(0)))
-//                .andExpect(jsonPath("$.gameComplete", is(false)))
-//                .andExpect(jsonPath("$").isNotEmpty());
-//
-//    }
-//
-//    @Test
-//    public void testGetAllProgress() throws Exception {
-//        mockMvc.perform(get(PROGRESS_URL))
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$").isArray())
-//                .andExpect(jsonPath("$[0].id").exists())
-//                .andExpect(jsonPath("$[0].userId").exists())
-//                .andExpect(jsonPath("$[0].huntId").exists())
-//                .andExpect(jsonPath("$[0].targetLocationIndex").exists())
-//                .andExpect(jsonPath("$[0].gameComplete").exists());
-//    }
+    @Test
+    void testCreateProgress() throws Exception {
+        given()
+                .contentType(ContentType.JSON)
+                .body(
+                    """
+                    {
+                        "userId": 1,
+                        "huntId": 3,
+                        "targetLocationIndex": 0,
+                        "gameComplete": false
+                    }
+                    """
+                )
+                .when()
+                .post("/progress")
+                .then()
+                .statusCode(201)
+                .body("userId", is(1))
+                .body("huntId", is(3))
+                .body("targetLocationIndex", is(0))
+                .body("gameComplete", is(false));
+
+    }
+
 //
 //    @Test
 //    public void testGetProgressById() throws Exception {
