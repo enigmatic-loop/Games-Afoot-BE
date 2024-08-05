@@ -16,6 +16,9 @@ public class Location {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "address")
+    private String address;
+
     @Column(name = "latitude")
     private String latitude;
 
@@ -41,6 +44,7 @@ public class Location {
     // Parameterized constructor
     public Location(String name, String latitude, String longitude, String description, List<String> clues) {
         this.name = name;
+        this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.description = description;
@@ -62,6 +66,14 @@ public class Location {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getLatitude() {
@@ -107,8 +119,8 @@ public class Location {
     @Override
     public String toString() {
         return String.format(
-                "Location{id=%d, name='%s', latitude='%s', longitude='%s', description='%s', clues=%s}",
-                id, name, latitude, longitude, description, clues
+                "Location{id=%d, name='%s', address=%s, latitude='%s', longitude='%s', description='%s', clues=%s}",
+                id, name, address, latitude, longitude, description, clues
         );
     }
 }
