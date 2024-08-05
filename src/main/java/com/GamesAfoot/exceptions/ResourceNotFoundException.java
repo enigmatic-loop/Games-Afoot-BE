@@ -1,4 +1,4 @@
-package com.GamesAfoot.exception;
+package com.GamesAfoot.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

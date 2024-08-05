@@ -1,6 +1,6 @@
-package com.GamesAfoot.repository;
+package com.GamesAfoot.repositories;
 
-import com.GamesAfoot.model.Hunt;
+import com.GamesAfoot.models.Hunt;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

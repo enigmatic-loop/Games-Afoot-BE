@@ -1,6 +1,6 @@
-package com.GamesAfoot.repository;
+package com.GamesAfoot.repositories;
 
-import com.GamesAfoot.model.Location;
+import com.GamesAfoot.models.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

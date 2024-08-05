@@ -1,9 +1,9 @@
-package com.GamesAfoot.controller;
+package com.GamesAfoot.controllers;
 
-import com.GamesAfoot.model.Hunt;
-import com.GamesAfoot.model.Location;
-import com.GamesAfoot.repository.HuntRepository;
-import com.GamesAfoot.repository.LocationRepository;
+import com.GamesAfoot.models.Hunt;
+import com.GamesAfoot.models.Location;
+import com.GamesAfoot.repositories.HuntRepository;
+import com.GamesAfoot.repositories.LocationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
