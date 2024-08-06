@@ -12,19 +12,19 @@ public class Hunt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "start_latitude")
+    @Column(name = "startLatitude")
     private String startLatitude;
 
-    @Column(name = "start_longitude")
+    @Column(name = "startLongitude")
     private String startLongitude;
 
     @Column(name = "distance")
     private String distance;
 
-    @Column(name = "num_sites")
+    @Column(name = "numSites")
     private String numSites;
 
-    @Column(name = "game_type")
+    @Column(name = "gameType")
     private String gameType;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "hunt", cascade = CascadeType.ALL, orphanRemoval = false)
