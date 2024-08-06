@@ -29,12 +29,12 @@ public class Location {
     private String description;
 
     @ElementCollection
-    @CollectionTable(name = "location_clues", joinColumns = @JoinColumn(name = "location_id"))
+    @CollectionTable(name = "locationClues", joinColumns = @JoinColumn(name = "locationId"))
     @Column(name = "clue")
     private List<String> clues;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hunt_id", nullable = false)
+    @JoinColumn(name = "huntId", nullable = false)
     @JsonBackReference
     private Hunt hunt;
 
@@ -42,7 +42,7 @@ public class Location {
     public Location() {}
 
     // Parameterized constructor
-    public Location(String name, String latitude, String longitude, String description, List<String> clues) {
+    public Location(String name, String address, String latitude, String longitude, String description, List<String> clues) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
