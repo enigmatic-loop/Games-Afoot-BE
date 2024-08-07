@@ -1,4 +1,4 @@
-package com.GamesAfoot;
+package com.GamesAfoot.unit;
 
 import com.GamesAfoot.exceptions.ProgressNotFoundException;
 import com.GamesAfoot.models.Progress;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
-public class ProgressServiceUnitTest {
+public class ProgressServiceUnitTests {
 
     @Mock
     ProgressRepository progressRepository;

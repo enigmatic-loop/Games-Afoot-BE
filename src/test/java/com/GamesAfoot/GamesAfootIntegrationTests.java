@@ -1,6 +1,9 @@
 package com.GamesAfoot;
 
+import com.GamesAfoot.models.Hunt;
 import com.GamesAfoot.models.Progress;
+import com.GamesAfoot.models.Location;
+import com.GamesAfoot.repositories.HuntRepository;
 import com.GamesAfoot.repositories.ProgressRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -15,20 +18,20 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-import static org.hamcrest.Matchers.hasSize;
-
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-public class ProgressIntegrationTest {
+public class GamesAfootIntegrationTests {
 
     @LocalServerPort
     private Integer port;
@@ -40,6 +43,7 @@ public class ProgressIntegrationTest {
     );
 
     private final static String PROGRESS_URL = "/progress";
+    private final static String HUNT_URL = "/hunts";
 
     @BeforeAll
     static void beforeAll() {
@@ -61,11 +65,58 @@ public class ProgressIntegrationTest {
     @Autowired
     private ProgressRepository progressRepository;
 
+    @Autowired
+    private HuntRepository huntRepository;
+
     @BeforeEach
     void setUp() {
         RestAssured.baseURI = "http://localhost:" + port;
         progressRepository.deleteAll();
     }
+
+    @Test
+    void testCreateHunt() throws Exception {
+        given()
+                .contentType(ContentType.JSON)
+                .body(
+                        """
+                        {
+                            "startLatitude": "47.6061",
+                            "startLongitude": "122.3328",
+                            "distance": "3",
+                            "numSites": "5",
+                            "gameType": "Historic"
+                        }
+                        """
+                )
+                .when()
+                .post(HUNT_URL)
+                .then()
+                .statusCode(201)
+                .body("startLatitude", is("47.6061"))
+                .body("startLongitude", is("122.3328"))
+                .body("distance", is("3"))
+                .body("numSites", is("5"))
+                .body("gameType", is("Historic"));
+
+    }
+
+    @Test
+    void testGenerateLocations() throws Exception {
+        List<Location> generatedLocations = new ArrayList<>();
+        Hunt hunt = new Hunt("47.6061", "122.3328", "2", "3", "Yummy treats", generatedLocations);
+        huntRepository.save(hunt);
+
+        given()
+                .contentType(ContentType.TEXT)
+                .when()
+                .post(HUNT_URL + "/{id}/generate_locations", hunt.getId())
+                .then()
+                .log()
+                .body()
+                .statusCode(201);
+    }
+
 
     @Test
     void shouldGetAllProgress() throws Exception {
@@ -99,7 +150,7 @@ public class ProgressIntegrationTest {
                     """
                 )
                 .when()
-                .post("/progress")
+                .post(PROGRESS_URL)
                 .then()
                 .statusCode(201)
                 .body("userId", is(1))
@@ -109,19 +160,23 @@ public class ProgressIntegrationTest {
 
     }
 
-//
-//    @Test
-//    public void testGetProgressById() throws Exception {
-//        mockMvc.perform(get(PROGRESS_URL + "/1"))
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.id", is(1)))
-//                .andExpect(jsonPath("$.userId", is(1)))
-//                .andExpect(jsonPath("$.huntId", is(1)))
-//                .andExpect(jsonPath("$.targetLocationIndex", is(3)))
-//                .andExpect(jsonPath("$.gameComplete", is(false)))
-//                .andExpect(jsonPath("$").isNotEmpty());
-//    }
+
+    @Test
+    public void testGetProgressById() throws Exception {
+        Progress progress = progressRepository.save(new Progress(null, 1, 2, 3, true));
+        assertThat(progressRepository.findById(progress.getId())).isPresent();
+
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(PROGRESS_URL + "/{id}", progress.getId())
+                .then()
+                .statusCode(200)
+                .body("id", is(1))
+                .body("userId", is(1))
+                .body("huntId", is(2))
+                .body("targetLocationIndex", is(3))
+                .body("gameComplete", is(true));
+    }
 
 }
