@@ -1,4 +1,4 @@
-package com.GamesAfoot;
+package com.GamesAfoot.unit;
 
 import com.GamesAfoot.models.Progress;
 import com.GamesAfoot.controllers.ProgressController;
@@ -28,7 +28,7 @@ import java.util.Collections;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ProgressController.class)
-public class ProgressControllerUnitTest {
+public class ProgressControllerUnitTests {
 
     @Autowired
     private MockMvc mockMvc;
