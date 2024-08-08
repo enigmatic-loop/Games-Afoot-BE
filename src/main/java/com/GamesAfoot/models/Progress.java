@@ -12,7 +12,7 @@ public class Progress {
     private Integer id;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "userId", nullable = false)
+    @Column(name = "userId")
     private Integer userId;
 
     @Column(name = "huntId", nullable = false, updatable = false)
