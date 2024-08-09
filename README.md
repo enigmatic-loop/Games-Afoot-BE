@@ -75,7 +75,7 @@ The backend will start on `http://localhost:8080`.
 ### 4. Testing
 Run unit tests using JUnit:
 ```
-mvn test
+$ mvn test
 ```
 ### 5. API Endpoints
 #### Scavenger Hunt
