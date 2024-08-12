@@ -141,15 +141,19 @@ public class HuntController {
     private ChatResponse generateLocationsFromAI(Hunt hunt) {
         var openAiApi = new OpenAiApi(System.getenv("OPENAI_KEY"));
         var openAiChatOptions = OpenAiChatOptions.builder()
-                .withModel("gpt-3.5-turbo")
+                .withModel("gpt-4-turbo") // Updated model for better results
+//        Lower temperature for more deterministic responses
                 .withTemperature((float) 0.2F)
+// Allow repetitions
+                .withFrequencyPenalty((float) 0)
+//           Use all possible tokens
                 .withTopP((float) 1.0F)
                 .build();
         var chatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
 
         ChatResponse response = chatModel.call(
                 new Prompt(String.format(
-                        "Generate a JSON array of %s %s within exactly %s linear miles from the user's location, which is (%s, %s) from start to finish in linear order. DO NOT GO OUT OF BOUNDS OF THE WALKING DISTANCE. Ensure that all locations are real and legitimate, and that their geo-coordinates (latitude and longitude) are accurate, verified against reliable sources, and properly formatted as floating-point numbers. Each object should include a string data type for 'name', 'address, a floating-point number for 'latitude', a floating-point number for 'longitude', 'description', and a JSON array of 3 'clues'. Make sure to ONLY respond with a JSON ARRAY, without any characters before or after the JSON, and NEVER A STRING REPRESENTATION OF THE JSON ARRAY. If you cannot find real and legitimate locations in the user's location that meet the prompt's request, provide a suitable message explaining the issue, without excluding any particular community or culture.",
+                        "Generate a JSON array of %s %s within exactly %s linear miles from the user's location, which is (%s, %s) from start to finish in linear order. DO NOT GO OUT OF BOUNDS OF THE WALKING DISTANCE. 1 means all locations have to be within one mile walking distance, 2 means the user wants to walk no more than 2 miles to play the game, and so on. Ensure that all locations are real and legitimate, and that their geo-coordinates (latitude and longitude) are accurate, verified against reliable sources, and properly formatted as floating-point numbers. Each object should include a string data type for 'name', 'address, a floating-point number for 'latitude', a floating-point number for 'longitude', 'description', and a JSON array of 3 'clues'. Make sure to ONLY respond with a JSON ARRAY, without any characters before or after the JSON, and NEVER A STRING REPRESENTATION OF THE JSON ARRAY. If you cannot find real and legitimate locations in the user's location that meet the prompt's request, provide a suitable message explaining the issue, without excluding any particular community or culture.",
                         hunt.getNumSites(), hunt.getGameType(), hunt.getDistance(), hunt.getStartLatitude(), hunt.getStartLongitude())));
 
 
