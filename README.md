@@ -6,6 +6,7 @@ locations. Users can input their starting location or use their current location
 the number of locations they want to visit within a specified radius. The app generates a 
 list of locations using OpenAI and provides hints for the user to discover each location. 
 As the user reaches each location, the next hint is revealed until the final destination is found.
+
 *****Please note that OpenAI may generate unreal locations :) currently, the OpenAI prompt seems to
 be effectively generating real locations, however our team plans to integrate a locations API in the future!**
 
