@@ -12,7 +12,7 @@ be effectively generating real locations, however our team plans to integrate a 
 
 ## Team
 - [**Jaime Mitchell**](https://github.com/JaimeMitchell) - Original concept, Backend
-- [**Nina Sohn**](https://github.com/enigmatic-loop) - Backend
+- [**Nina Sohn**](https://github.com/enigmatic-loop) - Backend/Frontend Assist
 - [**Jenny Chen**](https://github.com/jennycodingnow) - Frontend
 - [**Miranda Zhang**](https://github.com/yxzhang88) - Frontend
 
