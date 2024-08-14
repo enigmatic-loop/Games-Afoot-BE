@@ -11,10 +11,10 @@ As the user reaches each location, the next hint is revealed until the final des
 be effectively generating real locations, however our team plans to integrate a locations API in the future!**
 
 ## Team
-- [**Jaime Mitchell**](https://github.com/JaimeMitchell) - Original concept, Backend
-- [**Nina Sohn**](https://github.com/enigmatic-loop) - Backend/Frontend Assist
-- [**Jenny Chen**](https://github.com/jennycodingnow) - Frontend
-- [**Miranda Zhang**](https://github.com/yxzhang88) - Frontend
+- [**Jaime Mitchell**](https://github.com/JaimeMitchell) - Original concept, Backend Engineer
+- [**Nina Sohn**](https://github.com/enigmatic-loop) - Backend Engineer & Frontend Assist
+- [**Jenny Chen**](https://github.com/jennycodingnow) - Frontend Developer
+- [**Miranda Zhang**](https://github.com/yxzhang88) - Frontend Developer
 
 ## Features
 - **Location-Based Scavenger Hunts**: Users can start a scavenger hunt based on their current or specified location.
